@@ -30,9 +30,9 @@ export default function WhoWeAre() {
             Who We Are
           </h2>
           <p className="text-navy/70 text-lg leading-relaxed mb-4">
-            At Horizon Properties, we connect people with exceptional homes and
-            sound investments. Our approach is built on integrity, deep market
-            knowledge, and a genuine commitment to client satisfaction.
+            At Horizon Properties, we connect people with extraordinary homes
+            and sound investments. Our approach is built on integrity, deep
+            market knowledge, and a genuine commitment to client satisfaction.
           </p>
           <p className="text-navy/70 text-lg leading-relaxed mb-8">
             Whether you are buying your first home, selling a long-time
@@ -51,7 +51,7 @@ export default function WhoWeAre() {
           </button>
         </motion.div>
 
-        {/* Right: Image Carousel */}
+        {/* Right: Asymmetric Image Composition */}
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -59,45 +59,51 @@ export default function WhoWeAre() {
           transition={{ duration: 0.6 }}
           className="relative"
         >
-          <div className="relative rounded-2xl overflow-hidden aspect-[4/3] card-shadow">
-            {galleryImages.map((img, i) => (
+          <div className="grid lg:grid-cols-4 gap-4">
+            {/* Main Image */}
+            <div className="lg:col-span-3 rounded-2xl overflow-hidden aspect-[4/3] card-shadow relative group">
               <img
+                src={galleryImages[current]}
+                alt={`Horizon Properties gallery ${current + 1}`}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              {/* Navigation arrows */}
+              <button
+                onClick={prev}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 hover:bg-white shadow-lg flex items-center justify-center transition-all"
+                aria-label="Previous image"
+              >
+                <ChevronLeft className="w-5 h-5 text-navy" />
+              </button>
+              <button
+                onClick={next}
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 hover:bg-white shadow-lg flex items-center justify-center transition-all"
+                aria-label="Next image"
+              >
+                <ChevronRight className="w-5 h-5 text-navy" />
+              </button>
+            </div>
+            {/* Secondary Image — desktop only, offset down for asymmetric feel */}
+            <div className="hidden lg:block lg:col-span-1 lg:mt-16 rounded-2xl overflow-hidden aspect-[3/4] card-shadow group">
+              <img
+                src={galleryImages[(current + 1) % galleryImages.length]}
+                alt="Next property preview"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+            </div>
+          </div>
+          {/* Dots */}
+          <div className="flex justify-center gap-2 mt-5">
+            {galleryImages.map((_, i) => (
+              <button
                 key={i}
-                src={img}
-                alt={`Property gallery ${i + 1}`}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-                  i === current ? 'opacity-100' : 'opacity-0'
+                onClick={() => setCurrent(i)}
+                className={`h-2 rounded-full transition-all ${
+                  i === current ? 'bg-gold w-6' : 'bg-navy/20 w-2'
                 }`}
+                aria-label={`Go to image ${i + 1}`}
               />
             ))}
-            {/* Arrows */}
-            <button
-              onClick={prev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 hover:bg-white shadow-lg flex items-center justify-center transition-all"
-              aria-label="Previous image"
-            >
-              <ChevronLeft className="w-5 h-5 text-navy" />
-            </button>
-            <button
-              onClick={next}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 hover:bg-white shadow-lg flex items-center justify-center transition-all"
-              aria-label="Next image"
-            >
-              <ChevronRight className="w-5 h-5 text-navy" />
-            </button>
-            {/* Dots */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {galleryImages.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrent(i)}
-                  className={`h-2 rounded-full transition-all ${
-                    i === current ? 'bg-gold w-6' : 'bg-white/50 w-2'
-                  }`}
-                  aria-label={`Go to image ${i + 1}`}
-                />
-              ))}
-            </div>
           </div>
         </motion.div>
       </div>

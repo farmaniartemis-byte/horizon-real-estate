@@ -29,14 +29,42 @@ const bedOptions = [
   { value: '5', label: '5+ Beds', min: 5 },
 ]
 
+const bathOptions = [
+  { value: 'all', label: 'Any Baths', min: 0 },
+  { value: '2', label: '2+ Baths', min: 2 },
+  { value: '3', label: '3+ Baths', min: 3 },
+  { value: '4', label: '4+ Baths', min: 4 },
+  { value: '5', label: '5+ Baths', min: 5 },
+]
+
+const sortOptions = [
+  { value: 'default', label: 'Default' },
+  { value: 'price-low', label: 'Price: Low to High' },
+  { value: 'price-high', label: 'Price: High to Low' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'beds', label: 'Most Bedrooms' },
+  { value: 'sqft', label: 'Largest Area' },
+]
+
+const locations = [
+  { value: 'all', label: 'All Locations' },
+  ...Array.from(new Set(properties.map((p) => p.city))).map((c) => ({
+    value: c,
+    label: c,
+  })),
+]
+
 export default function PropertiesPage() {
   const [search, setSearch] = useState('')
   const [type, setType] = useState<PropertyType | 'all'>('all')
   const [priceRange, setPriceRange] = useState('all')
   const [beds, setBeds] = useState('all')
+  const [baths, setBaths] = useState('all')
+  const [location, setLocation] = useState('all')
+  const [sortBy, setSortBy] = useState('default')
 
   const filtered = useMemo(() => {
-    return properties.filter((p) => {
+    let result = properties.filter((p) => {
       const matchSearch =
         !search ||
         p.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -47,18 +75,55 @@ export default function PropertiesPage() {
       const matchPrice = p.price >= range.min && p.price <= range.max
       const bedOpt = bedOptions.find((b) => b.value === beds)!
       const matchBeds = p.beds >= bedOpt.min
-      return matchSearch && matchType && matchPrice && matchBeds
+      const bathOpt = bathOptions.find((b) => b.value === baths)!
+      const matchBaths = p.baths >= bathOpt.min
+      const matchLocation = location === 'all' || p.city === location
+      return (
+        matchSearch &&
+        matchType &&
+        matchPrice &&
+        matchBeds &&
+        matchBaths &&
+        matchLocation
+      )
     })
-  }, [search, type, priceRange, beds])
+
+    switch (sortBy) {
+      case 'price-low':
+        result = [...result].sort((a, b) => a.price - b.price)
+        break
+      case 'price-high':
+        result = [...result].sort((a, b) => b.price - a.price)
+        break
+      case 'newest':
+        result = [...result].sort((a, b) => b.yearBuilt - a.yearBuilt)
+        break
+      case 'beds':
+        result = [...result].sort((a, b) => b.beds - a.beds)
+        break
+      case 'sqft':
+        result = [...result].sort((a, b) => b.sqft - a.sqft)
+        break
+    }
+    return result
+  }, [search, type, priceRange, beds, baths, location, sortBy])
 
   const hasFilters =
-    search || type !== 'all' || priceRange !== 'all' || beds !== 'all'
+    search ||
+    type !== 'all' ||
+    priceRange !== 'all' ||
+    beds !== 'all' ||
+    baths !== 'all' ||
+    location !== 'all'
 
   const clearFilters = () => {
     setSearch('')
     setType('all')
     setPriceRange('all')
     setBeds('all')
+    setBaths('all')
+    setLocation('all')
+    setSortBy('default')
   }
 
   return (
@@ -94,7 +159,18 @@ export default function PropertiesPage() {
             </div>
 
             {/* Filters */}
-            <div className="flex gap-3 flex-wrap">
+            <div className="grid grid-cols-2 lg:flex lg:flex-wrap gap-3">
+              <select
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="px-4 py-3 rounded-lg border border-navy/10 focus:border-gold focus:outline-none text-sm bg-white"
+              >
+                {locations.map((l) => (
+                  <option key={l.value} value={l.value}>
+                    {l.label}
+                  </option>
+                ))}
+              </select>
               <select
                 value={type}
                 onChange={(e) =>
@@ -130,10 +206,32 @@ export default function PropertiesPage() {
                   </option>
                 ))}
               </select>
+              <select
+                value={baths}
+                onChange={(e) => setBaths(e.target.value)}
+                className="px-4 py-3 rounded-lg border border-navy/10 focus:border-gold focus:outline-none text-sm bg-white"
+              >
+                {bathOptions.map((b) => (
+                  <option key={b.value} value={b.value}>
+                    {b.label}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-3 rounded-lg border border-navy/10 focus:border-gold focus:outline-none text-sm bg-white"
+              >
+                {sortOptions.map((s) => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
               {hasFilters && (
                 <button
                   onClick={clearFilters}
-                  className="px-4 py-3 rounded-lg border border-navy/10 text-navy/60 hover:text-navy hover:border-navy/20 text-sm flex items-center gap-1.5"
+                  className="px-4 py-3 rounded-lg border border-navy/10 text-navy/60 hover:text-navy hover:border-navy/20 text-sm flex items-center gap-1.5 justify-center"
                 >
                   <X className="w-4 h-4" /> Clear
                 </button>
@@ -146,8 +244,8 @@ export default function PropertiesPage() {
       {/* Results */}
       <div className="container-premium py-10">
         <p className="text-navy/60 text-sm mb-6">
-          {filtered.length} {filtered.length === 1 ? 'property' : 'properties'}{' '}
-          found
+          {filtered.length}{' '}
+          {filtered.length === 1 ? 'property' : 'properties'} found
         </p>
         {filtered.length > 0 ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">

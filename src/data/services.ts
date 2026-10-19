@@ -2,27 +2,45 @@ import type { Service } from '../types'
 
 export const services: Service[] = [
   {
-    id: 'buy',
+    id: 'sales',
     icon: 'Home',
-    title: 'Buy a Property',
-    description: 'Browse our curated portfolio of premium homes and investment properties, handpicked in the most sought-after locations.',
+    title: 'Luxury Home Sales',
+    description:
+      'Browse our curated portfolio of premium homes and investment properties, handpicked in the most sought-after locations.',
   },
   {
-    id: 'sell',
+    id: 'investment',
     icon: 'TrendingUp',
-    title: 'Sell Your Home',
-    description: 'Get a professional valuation and a tailored marketing strategy that positions your property to sell faster and at the best price.',
+    title: 'Property Investment',
+    description:
+      'Leverage our market intelligence to identify high-yield opportunities and build a resilient real estate investment portfolio.',
   },
   {
-    id: 'invest',
-    icon: 'Briefcase',
-    title: 'Investment Advisory',
-    description: 'Leverage our market intelligence to identify high-yield opportunities and build a resilient real estate investment portfolio.',
+    id: 'marketing',
+    icon: 'Camera',
+    title: 'Property Marketing',
+    description:
+      'From professional photography to targeted digital campaigns, we position your property to reach the right buyers faster.',
   },
   {
-    id: 'manage',
-    icon: 'Building2',
-    title: 'Property Management',
-    description: 'From tenant screening to maintenance and financial reporting, we handle every detail so your investment runs effortlessly.',
+    id: 'advisory',
+    icon: 'Lightbulb',
+    title: 'Real Estate Advisory',
+    description:
+      'Get expert guidance on market trends, property selection, and investment strategy tailored to your long-term financial goals.',
+  },
+  {
+    id: 'valuation',
+    icon: 'BarChart',
+    title: 'Property Valuation',
+    description:
+      'Receive an accurate, data-driven valuation of your property backed by deep market analysis and comparable sales data.',
+  },
+  {
+    id: 'relocation',
+    icon: 'MapPin',
+    title: 'Relocation Services',
+    description:
+      'Whether moving across town or across the country, we make your transition seamless with end-to-end relocation support.',
   },
 ]
